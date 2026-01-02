@@ -1,0 +1,9 @@
+pipeline:
+  identifier: nirmalfirstbuildpipeline
+  properties:
+    ci:
+      codebase:
+        build:
+          type: branch
+          spec:
+            branch: main
