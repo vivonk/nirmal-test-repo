@@ -26,3 +26,44 @@ databaseChangeLog:
               - column:
                   name: id
                   type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: company_name
+                  type: varchar(200)
+  - changeSet:
+      id: 3
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: email
+                  type: varchar(255)
+      rollback:
+        - dropColumn:
+            tableName: employees
+            columnName: email
+  - changeSet:
+      id: 4
+      author: dbe_team
+      changes:
+        - insert:
+            tableName: employees
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: "John Doe"
+              - column:
+                  name: email
+                  value: "john.doe@example.com"
+      rollback:
+        - delete:
+            tableName: employees
+            where: id = 1
