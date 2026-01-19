@@ -60,3 +60,19 @@ databaseChangeLog:
         - delete:
             tableName: employees
             where: id = 1
+  - changeSet:
+      id: 5
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employer
+            columns:
+              - column:
+                  name: company_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: employer
+            columnName: company_name
