@@ -76,3 +76,191 @@ databaseChangeLog:
         - dropColumn:
             tableName: employer
             columnName: company_name
+  - changeSet:
+      id: 6
+      author: dbe_team
+      changes:
+        - createTable:
+            tableName: departments
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: department_name
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: varchar(100)
+      rollback:
+        - dropTable:
+            tableName: departments
+  - changeSet:
+      id: 7
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: department_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_employees_department
+                    references: departments(id)
+      rollback:
+        - dropColumn:
+            tableName: employees
+            columnName: department_id
+  - changeSet:
+      id: 8
+      author: dbe_team
+      changes:
+        - insert:
+            tableName: employer
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: company_name
+                  value: "Tech Corp Inc"
+        - insert:
+            tableName: employer
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: company_name
+                  value: "Innovation Labs"
+      rollback:
+        - delete:
+            tableName: employer
+            where: id IN (1, 2)
+  - changeSet:
+      id: 9
+      author: dbe_team
+      changes:
+        - createIndex:
+            indexName: idx_employee_email
+            tableName: employees
+            columns:
+              - column:
+                  name: email
+      rollback:
+        - dropIndex:
+            indexName: idx_employee_email
+            tableName: employees
+  - changeSet:
+      id: 10
+      author: dbe_team
+      changes:
+        - createTable:
+            tableName: projects
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: project_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: date
+              - column:
+                  name: end_date
+                  type: date
+              - column:
+                  name: budget
+                  type: decimal(10,2)
+      rollback:
+        - dropTable:
+            tableName: projects
+  - changeSet:
+      id: 11
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: non_existent_table
+            columns:
+              - column:
+                  name: new_column
+                  type: varchar(100)
+      rollback:
+        - dropColumn:
+            tableName: non_existent_table
+            columnName: new_column
+  - changeSet:
+      id: 12
+      author: dbe_team
+      changes:
+        - createTable:
+            tableName: employee_projects
+            columns:
+              - column:
+                  name: employee_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emp_proj_employee
+                    references: employees(id)
+              - column:
+                  name: project_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emp_proj_project
+                    references: projects(id)
+              - column:
+                  name: role
+                  type: varchar(100)
+              - column:
+                  name: assigned_date
+                  type: date
+        - addPrimaryKey:
+            tableName: employee_projects
+            columnNames: employee_id, project_id
+            constraintName: pk_employee_projects
+      rollback:
+        - dropTable:
+            tableName: employee_projects
+  - changeSet:
+      id: 13
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: salary
+                  type: decimal(12,2)
+              - column:
+                  name: hire_date
+                  type: date
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+      rollback:
+        - dropColumn:
+            tableName: employees
+            columnName: salary
+        - dropColumn:
+            tableName: employees
+            columnName: hire_date
+        - dropColumn:
+            tableName: employees
+            columnName: is_active
