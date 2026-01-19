@@ -26,13 +26,6 @@ databaseChangeLog:
               - column:
                   name: id
                   type: int
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: company_name
-                  type: varchar(200)
   - changeSet:
       id: 3
       author: dbe_team
