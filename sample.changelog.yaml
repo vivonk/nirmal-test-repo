@@ -264,3 +264,70 @@ databaseChangeLog:
         - dropColumn:
             tableName: employees
             columnName: is_active
+  - changeSet:
+      id: 14
+      author: dbe_team
+      changes:
+        - insert:
+            tableName: departments
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: department_name
+                  value: "Engineering"
+              - column:
+                  name: location
+                  value: "Building A"
+        - insert:
+            tableName: departments
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: department_name
+                  value: "Human Resources"
+              - column:
+                  name: location
+                  value: "Building B"
+        - insert:
+            tableName: departments
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: department_name
+                  value: "Sales"
+              - column:
+                  name: location
+                  value: "Building C"
+      rollback:
+        - delete:
+            tableName: departments
+            where: id IN (1, 2, 3)
+  - changeSet:
+      id: 15
+      author: dbe_team
+      changes:
+        - addUniqueConstraint:
+            tableName: departments
+            columnNames: department_name
+            constraintName: uk_department_name
+        - createIndex:
+            indexName: idx_projects_dates
+            tableName: projects
+            columns:
+              - column:
+                  name: start_date
+              - column:
+                  name: end_date
+      rollback:
+        - dropUniqueConstraint:
+            tableName: departments
+            constraintName: uk_department_name
+        - dropIndex:
+            indexName: idx_projects_dates
+            tableName: projects
