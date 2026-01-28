@@ -331,3 +331,54 @@ databaseChangeLog:
         - dropIndex:
             indexName: idx_projects_dates
             tableName: projects
+  - changeSet:
+      id: 16
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+      rollback:
+        - dropColumn:
+            tableName: employees
+            columnName: phone_number
+  - changeSet:
+      id: 17
+      author: dbe_team
+      changes:
+        - insert:
+            tableName: projects
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: project_name
+                  value: "Website Redesign"
+              - column:
+                  name: start_date
+                  valueDate: "2025-01-01"
+              - column:
+                  name: budget
+                  valueNumeric: 50000.00
+      rollback:
+        - delete:
+            tableName: projects
+            where: id = 1
+  - changeSet:
+      id: 18
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: invalid_table_name
+            columns:
+              - column:
+                  name: some_column
+                  type: varchar(100)
+      rollback:
+        - dropColumn:
+            tableName: invalid_table_name
+            columnName: some_column
