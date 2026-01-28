@@ -194,15 +194,15 @@ databaseChangeLog:
       author: dbe_team
       changes:
         - addColumn:
-            tableName: non_existent_table
+            tableName: projects
             columns:
               - column:
-                  name: new_column
-                  type: varchar(100)
+                  name: description
+                  type: varchar(500)
       rollback:
         - dropColumn:
-            tableName: non_existent_table
-            columnName: new_column
+            tableName: projects
+            columnName: description
   - changeSet:
       id: 12
       author: dbe_team
