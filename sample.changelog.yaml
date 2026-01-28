@@ -373,15 +373,15 @@ databaseChangeLog:
       author: dbe_team
       changes:
         - addColumn:
-            tableName: invalid_table_name
+            tableName: employer
             columns:
               - column:
-                  name: some_column
+                  name: industry
                   type: varchar(100)
       rollback:
         - dropColumn:
-            tableName: invalid_table_name
-            columnName: some_column
+            tableName: employer
+            columnName: industry
   - changeSet:
       id: 19
       author: dbe_team
