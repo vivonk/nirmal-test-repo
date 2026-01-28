@@ -382,3 +382,46 @@ databaseChangeLog:
         - dropColumn:
             tableName: invalid_table_name
             columnName: some_column
+  - changeSet:
+      id: 19
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: departments
+            columns:
+              - column:
+                  name: manager_id
+                  type: int
+      rollback:
+        - dropColumn:
+            tableName: departments
+            columnName: manager_id
+  - changeSet:
+      id: 20
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: employees
+            columns:
+              - column:
+                  name: address
+                  type: varchar(255)
+      rollback:
+        - dropColumn:
+            tableName: wrong_table_reference
+            columnName: wrong_column_name
+  - changeSet:
+      id: 21
+      author: dbe_team
+      changes:
+        - addColumn:
+            tableName: projects
+            columns:
+              - column:
+                  name: priority
+                  type: int
+                  defaultValueNumeric: 1
+      rollback:
+        - dropColumn:
+            tableName: projects
+            columnName: priority
