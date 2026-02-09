@@ -425,3 +425,192 @@ databaseChangeLog:
         - dropColumn:
             tableName: projects
             columnName: priority
+  - changeSet:
+      id: 1695759694537-1
+      author: Stephen Atwell
+      comment: Create barbecue_foods table with sample menu items
+      changes:
+        - createTable:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: price
+                  type: DECIMAL(10, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: spice_level
+                  type: INT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: cooking_time_hours
+                  type: DECIMAL(4, 2)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: createdAt
+                  type: DATETIME2
+                  defaultValueComputed: GETDATE()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updatedAt
+                  type: DATETIME2
+                  defaultValueComputed: GETDATE()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: barbecue_foods
+  - changeSet:
+      id: 1695759694537-2
+      author: Stephen Atwell
+      comment: Create index on barbecue_foods category
+      changes:
+        - createIndex:
+            indexName: idx_barbecue_foods_category
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: category
+      rollback:
+        - dropIndex:
+            indexName: idx_barbecue_foods_category
+            tableName: barbecue_foods
+  - changeSet:
+      id: 1695759694537-3
+      author: Stephen Atwell
+      comment: Insert sample barbecue food items
+      changes:
+        - insert:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: name
+                  value: "Frank"
+              - column:
+                  name: description
+                  value: "Slow-cooked pulled pork with our signature sauce"
+              - column:
+                  name: price
+                  value: 14.99
+              - column:
+                  name: category
+                  value: "Pulled Pork"
+              - column:
+                  name: spice_level
+                  value: 2
+              - column:
+                  name: cooking_time_hours
+                  value: 8.5
+        - insert:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: name
+                  value: "Texas Brisket"
+              - column:
+                  name: description
+                  value: "Smoked beef brisket with bark crust"
+              - column:
+                  name: price
+                  value: 18.99
+              - column:
+                  name: category
+                  value: "Brisket"
+              - column:
+                  name: spice_level
+                  value: 3
+              - column:
+                  name: cooking_time_hours
+                  value: 12.0
+        - insert:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: name
+                  value: "Baby Back Ribs"
+              - column:
+                  name: description
+                  value: "Tender pork ribs with smoky glaze"
+              - column:
+                  name: price
+                  value: 16.99
+              - column:
+                  name: category
+                  value: "Ribs"
+              - column:
+                  name: spice_level
+                  value: 2
+              - column:
+                  name: cooking_time_hours
+                  value: 6.0
+        - insert:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: name
+                  value: "Smoked Chicken"
+              - column:
+                  name: description
+                  value: "Half chicken smoked with hickory wood"
+              - column:
+                  name: price
+                  value: 12.99
+              - column:
+                  name: category
+                  value: "Chicken"
+              - column:
+                  name: spice_level
+                  value: 1
+              - column:
+                  name: cooking_time_hours
+                  value: 3.5
+        - insert:
+            tableName: barbecue_foods
+            columns:
+              - column:
+                  name: name
+                  value: "Jalapeño Sausage"
+              - column:
+                  name: description
+                  value: "Spicy smoked sausage with jalapeño chunks"
+              - column:
+                  name: price
+                  value: 10.99
+              - column:
+                  name: category
+                  value: "Sausage"
+              - column:
+                  name: spice_level
+                  value: 4
+              - column:
+                  name: cooking_time_hours
+                  value: 2.0
+      rollback:
+        - delete:
+            tableName: barbecue_foods
+            where: "category IN ('Pulled Pork', 'Brisket', 'Ribs', 'Chicken', 'Sausage')"
