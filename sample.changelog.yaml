@@ -614,3 +614,170 @@ databaseChangeLog:
         - delete:
             tableName: barbecue_foods
             where: "category IN ('Pulled Pork', 'Brisket', 'Ribs', 'Chicken', 'Sausage')"
+  - changeSet:
+      id: 22
+      author: dbe_team
+      comment: Create customers table - PASS
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+      rollback:
+        - dropTable:
+            tableName: customers
+  - changeSet:
+      id: 23
+      author: dbe_team
+      comment: Add column to non-existent table - FAIL
+      changes:
+        - addColumn:
+            tableName: non_existent_table_xyz
+            columns:
+              - column:
+                  name: test_column
+                  type: varchar(100)
+      rollback:
+        - dropColumn:
+            tableName: non_existent_table_xyz
+            columnName: test_column
+  - changeSet:
+      id: 24
+      author: dbe_team
+      comment: Add phone column to customers - PASS
+      changes:
+        - addColumn:
+            tableName: customers
+            columns:
+              - column:
+                  name: phone
+                  type: varchar(20)
+      rollback:
+        - dropColumn:
+            tableName: customers
+            columnName: phone
+  - changeSet:
+      id: 25
+      author: dbe_team
+      comment: Create orders table - PASS
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orders_customer
+                    references: customers(id)
+              - column:
+                  name: order_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_amount
+                  type: decimal(12,2)
+      rollback:
+        - dropTable:
+            tableName: orders
+  - changeSet:
+      id: 26
+      author: dbe_team
+      comment: Create index on orders customer_id - PASS
+      changes:
+        - createIndex:
+            indexName: idx_orders_customer
+            tableName: orders
+            columns:
+              - column:
+                  name: customer_id
+      rollback:
+        - dropIndex:
+            indexName: idx_orders_customer
+            tableName: orders
+  - changeSet:
+      id: 27
+      author: dbe_team
+      comment: Add status column to orders - PASS
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: status
+                  type: varchar(50)
+                  defaultValue: "pending"
+      rollback:
+        - dropColumn:
+            tableName: orders
+            columnName: status
+  - changeSet:
+      id: 28
+      author: dbe_team
+      comment: Insert sample customer - PASS
+      changes:
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: first_name
+                  value: "Jane"
+              - column:
+                  name: last_name
+                  value: "Smith"
+              - column:
+                  name: email
+                  value: "jane.smith@example.com"
+      rollback:
+        - delete:
+            tableName: customers
+            where: id = 1
+  - changeSet:
+      id: 29
+      author: dbe_team
+      comment: Add created_at column to customers - PASS
+      changes:
+        - addColumn:
+            tableName: customers
+            columns:
+              - column:
+                  name: created_at
+                  type: datetime
+                  defaultValueComputed: CURRENT_TIMESTAMP
+      rollback:
+        - dropColumn:
+            tableName: customers
+            columnName: created_at
