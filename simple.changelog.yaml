@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: nirmal
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: email
+                  type: varchar(100)
+      rollback:
+        - dropTable:
+            tableName: customers
+  - changeSet:
+      id: 2
+      author: nirmal
+      changes:
+        - addColumn:
+            tableName: customers
+            columns:
+              - column:
+                  name: phone
+                  type: varchar(20)
+      rollback:
+        - dropColumn:
+            tableName: customers
+            columnName: phone
+  - changeSet:
+      id: 3
+      author: nirmal
+      changes:
+        - createIndex:
+            indexName: idx_customers_email
+            tableName: customers
+            columns:
+              - column:
+                  name: email
+      rollback:
+        - dropIndex:
+            indexName: idx_customers_email
+            tableName: customers
