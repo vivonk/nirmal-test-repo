@@ -10,23 +10,15 @@ databaseChangeLog:
               - column:
                   name: user_id
                   type: INT64
-                  constraints:
-                    primaryKey: true
-                    nullable: false
               - column:
                   name: username
                   type: STRING(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: email
                   type: STRING(255)
-                  constraints:
-                    nullable: false
               - column:
                   name: is_active
                   type: BOOL
-                  defaultValueBoolean: true
               - column:
                   name: created_at
                   type: TIMESTAMP
@@ -36,7 +28,7 @@ databaseChangeLog:
   - changeSet:
       id: 2
       author: nirmal
-      comment: Create orders table interleaved with users
+      comment: Create orders table
       changes:
         - createTable:
             tableName: orders
@@ -44,18 +36,12 @@ databaseChangeLog:
               - column:
                   name: user_id
                   type: INT64
-                  constraints:
-                    nullable: false
               - column:
                   name: order_id
                   type: INT64
-                  constraints:
-                    nullable: false
               - column:
                   name: product_name
                   type: STRING(200)
-                  constraints:
-                    nullable: false
               - column:
                   name: quantity
                   type: INT64
@@ -68,49 +54,13 @@ databaseChangeLog:
               - column:
                   name: status
                   type: STRING(50)
-                  defaultValue: "PENDING"
-        - addPrimaryKey:
-            tableName: orders
-            columnNames: user_id, order_id
-            constraintName: pk_orders
       rollback:
         - dropTable:
             tableName: orders
   - changeSet:
       id: 3
       author: nirmal
-      comment: Add columns and create index on users table
-      changes:
-        - addColumn:
-            tableName: users
-            columns:
-              - column:
-                  name: display_name
-                  type: STRING(150)
-              - column:
-                  name: last_login
-                  type: TIMESTAMP
-        - createIndex:
-            indexName: idx_users_email
-            tableName: users
-            unique: true
-            columns:
-              - column:
-                  name: email
-      rollback:
-        - dropIndex:
-            indexName: idx_users_email
-            tableName: users
-        - dropColumn:
-            tableName: users
-            columnName: display_name
-        - dropColumn:
-            tableName: users
-            columnName: last_login
-  - changeSet:
-      id: 4
-      author: nirmal
-      comment: Create audit_logs table and index on orders
+      comment: Create audit_logs table
       changes:
         - createTable:
             tableName: audit_logs
@@ -118,19 +68,12 @@ databaseChangeLog:
               - column:
                   name: log_id
                   type: INT64
-                  constraints:
-                    primaryKey: true
-                    nullable: false
               - column:
                   name: table_name
                   type: STRING(100)
-                  constraints:
-                    nullable: false
               - column:
                   name: operation
                   type: STRING(20)
-                  constraints:
-                    nullable: false
               - column:
                   name: record_id
                   type: INT64
@@ -143,15 +86,6 @@ databaseChangeLog:
               - column:
                   name: details
                   type: STRING(MAX)
-        - createIndex:
-            indexName: idx_orders_status
-            tableName: orders
-            columns:
-              - column:
-                  name: status
       rollback:
-        - dropIndex:
-            indexName: idx_orders_status
-            tableName: orders
         - dropTable:
             tableName: audit_logs
