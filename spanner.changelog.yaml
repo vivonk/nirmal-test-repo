@@ -1,91 +1,44 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: nirmal
-      comment: Create users table for Spanner
+      author: yourname
       changes:
         - createTable:
-            tableName: users
+            tableName: Singers
             columns:
               - column:
-                  name: user_id
+                  name: SingerId
                   type: INT64
+                  constraints:
+                    primaryKey: true
+                    nullable: false
               - column:
-                  name: username
-                  type: STRING(100)
+                  name: FirstName
+                  type: STRING(1024)
               - column:
-                  name: email
-                  type: STRING(255)
-              - column:
-                  name: is_active
-                  type: BOOL
-              - column:
-                  name: created_at
-                  type: TIMESTAMP
-      rollback:
-        - dropTable:
-            tableName: users
-  - changeSet:
-      id: 2
-      author: nirmal
-      comment: Create orders table
-      changes:
+                  name: LastName
+                  type: STRING(1024)
+                  constraints:
+                    nullable: false
         - createTable:
-            tableName: orders
+            tableName: Albums
             columns:
               - column:
-                  name: user_id
+                  name: AlbumId
                   type: INT64
+                  constraints:
+                    primaryKey: true
+                    nullable: false
               - column:
-                  name: order_id
+                  name: SingerId
                   type: INT64
+                  constraints:
+                    nullable: false
               - column:
-                  name: product_name
-                  type: STRING(200)
-              - column:
-                  name: quantity
-                  type: INT64
-              - column:
-                  name: total_amount
-                  type: FLOAT64
-              - column:
-                  name: order_date
-                  type: DATE
-              - column:
-                  name: status
-                  type: STRING(50)
-      rollback:
-        - dropTable:
-            tableName: orders
-  - changeSet:
-      id: 3
-      author: nirmal
-      comment: Create audit_logs table
-      changes:
-        - createTable:
-            tableName: audit_logs
-            columns:
-              - column:
-                  name: log_id
-                  type: INT64
-              - column:
-                  name: table_name
-                  type: STRING(100)
-              - column:
-                  name: operation
-                  type: STRING(20)
-              - column:
-                  name: record_id
-                  type: INT64
-              - column:
-                  name: changed_by
-                  type: STRING(100)
-              - column:
-                  name: changed_at
-                  type: TIMESTAMP
-              - column:
-                  name: details
-                  type: STRING(MAX)
-      rollback:
-        - dropTable:
-            tableName: audit_logs
+                  name: AlbumTitle
+                  type: STRING(1024)
+            # Example of an interleaved table, a Spanner feature
+            interleave:
+              parent: Singers
+              onDelete: CASCADE
+
