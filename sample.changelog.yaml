@@ -425,3 +425,53 @@ databaseChangeLog:
         - dropColumn:
             tableName: projects
             columnName: priority
+  - changeSet:
+      id: create-product-table
+      author: nirmal-sarswat
+      comment: Create product table with id and doc columns for storing JSON documents
+      labels: ""
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: doc
+                  type: JSONB
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+      rollback:
+        - dropTable:
+            tableName: product
+  - changeSet:
+      id: insert-product-franks-west-coast-rub
+      author: nirmal-sarswat
+      comment: Insert initial product row for Frank's West Coast Rub seasoning
+      labels: ""
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: doc
+                  value: '{"name": "Frank''s West Coast Rub","type": "seasoning","price": 7.99,"vegetarian": true}'
+      rollback:
+        - delete:
+            tableName: product
+            where: id = 1
