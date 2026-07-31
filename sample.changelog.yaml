@@ -538,6 +538,7 @@ databaseChangeLog:
       labels: ""
       changes:
         - sql:
+            splitStatements: false
             sql: |
               CREATE OR REPLACE FUNCTION sync_product_columns()
               RETURNS TRIGGER AS $$
