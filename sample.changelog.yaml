@@ -509,7 +509,6 @@ databaseChangeLog:
         - dropColumn:
             tableName: product
             columnName: vegetarian
-
   - changeSet:
       id: backfill-product-columns-from-json
       author: nirmal-sarswat
@@ -530,7 +529,6 @@ databaseChangeLog:
             sql: |
               UPDATE product
               SET name = NULL, type = NULL, price = NULL, vegetarian = NULL;
-
   - changeSet:
       id: create-product-sync-trigger-function
       author: nirmal-sarswat
@@ -564,7 +562,6 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: DROP FUNCTION IF EXISTS sync_product_columns();
-
   - changeSet:
       id: create-product-sync-trigger
       author: nirmal-sarswat
@@ -580,3 +577,67 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: DROP TRIGGER IF EXISTS trg_sync_product_columns ON product;
+  - changeSet:
+      id: create-project-funding-table
+      author: stephen-atwell
+      comment: Create project_funding table with foreign key to projects
+      labels: ""
+      changes:
+        - createTable:
+            tableName: project_funding
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: project
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: funder
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(15, 2)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: approval_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+      rollback:
+        - dropTable:
+            tableName: project_funding
+  - changeSet:
+      id: add-fk-project-funding-to-projects
+      author: stephen-atwell
+      comment: Add foreign key from project_funding.project to projects.id
+      labels: ""
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: project_funding
+            baseColumnNames: project
+            constraintName: fk_project_funding_project
+            referencedTableName: projects
+            referencedColumnNames: id
+            onDelete: CASCADE
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: project_funding
+            constraintName: fk_project_funding_project
