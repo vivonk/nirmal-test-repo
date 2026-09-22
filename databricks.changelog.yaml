@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: nirmal
+      changes:
+        - createTable:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: id
+                  type: INT
+              - column:
+                  name: name
+                  type: STRING
+              - column:
+                  name: hired_at
+                  type: TIMESTAMP
+      rollback:
+        - dropTable:
+            tableName: dbops_e2e_test_employees
+  - changeSet:
+      id: 2
+      author: nirmal
+      changes:
+        - createTable:
+            tableName: dbops_e2e_test_departments
+            columns:
+              - column:
+                  name: id
+                  type: INT
+              - column:
+                  name: name
+                  type: STRING
+      rollback:
+        - dropTable:
+            tableName: dbops_e2e_test_departments
