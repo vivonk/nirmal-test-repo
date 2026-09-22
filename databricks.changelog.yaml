@@ -118,7 +118,7 @@ databaseChangeLog:
               CREATE TABLE dbops_e2e_test_orders (
                 id BIGINT,
                 order_amount DECIMAL(10,2),
-                tax_amount DECIMAL(10,2) GENERATED ALWAYS AS (order_amount * 0.1),
+                tax_amount DECIMAL(10,2) GENERATED ALWAYS AS (CAST(order_amount * 0.1 AS DECIMAL(10,2))),
                 created_at TIMESTAMP
               ) USING DELTA
       rollback:
