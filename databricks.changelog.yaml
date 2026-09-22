@@ -333,10 +333,12 @@ databaseChangeLog:
       changes:
         - sql:
             sql: |-
+              ALTER TABLE dbops_e2e_test_departments ALTER COLUMN id SET NOT NULL;
               ALTER TABLE dbops_e2e_test_departments ADD CONSTRAINT pk_departments PRIMARY KEY (id);
               ALTER TABLE dbops_e2e_test_employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES dbops_e2e_test_departments (id) NOT ENFORCED
       rollback:
         - sql:
             sql: |-
               ALTER TABLE dbops_e2e_test_employees DROP CONSTRAINT fk_employees_department;
-              ALTER TABLE dbops_e2e_test_departments DROP CONSTRAINT pk_departments
+              ALTER TABLE dbops_e2e_test_departments DROP CONSTRAINT pk_departments;
+              ALTER TABLE dbops_e2e_test_departments ALTER COLUMN id DROP NOT NULL
