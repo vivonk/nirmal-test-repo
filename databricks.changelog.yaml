@@ -34,3 +34,309 @@ databaseChangeLog:
       rollback:
         - dropTable:
             tableName: dbops_e2e_test_departments
+  - changeSet:
+      id: 3
+      author: nirmal
+      changes:
+        - createTable:
+            tableName: dbops_e2e_test_projects
+            columns:
+              - column:
+                  name: id
+                  type: INT
+              - column:
+                  name: name
+                  type: STRING
+              - column:
+                  name: tags
+                  type: ARRAY<STRING>
+              - column:
+                  name: metadata
+                  type: MAP<STRING, STRING>
+              - column:
+                  name: lead
+                  type: STRUCT<employee_id:INT, name:STRING>
+      rollback:
+        - dropTable:
+            tableName: dbops_e2e_test_projects
+  - changeSet:
+      id: 4
+      author: nirmal
+      changes:
+        - addColumn:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: department_id
+                  type: INT
+              - column:
+                  name: salary
+                  type: DECIMAL(10,2)
+              - column:
+                  name: status
+                  type: STRING
+      rollback:
+        - dropColumn:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: department_id
+              - column:
+                  name: salary
+              - column:
+                  name: status
+  - changeSet:
+      id: 5
+      author: nirmal
+      changes:
+        - sql:
+            sql: ALTER TABLE dbops_e2e_test_employees ADD CONSTRAINT chk_employees_salary_positive CHECK (salary > 0)
+      rollback:
+        - sql:
+            sql: ALTER TABLE dbops_e2e_test_employees DROP CONSTRAINT chk_employees_salary_positive
+  - changeSet:
+      id: 6
+      author: nirmal
+      changes:
+        - sql:
+            sql: |-
+              CREATE TABLE dbops_e2e_test_sales (
+                id INT,
+                employee_id INT,
+                sale_amount DECIMAL(12,2),
+                sale_date DATE
+              ) USING DELTA PARTITIONED BY (sale_date)
+      rollback:
+        - sql:
+            sql: DROP TABLE dbops_e2e_test_sales
+  - changeSet:
+      id: 7
+      author: nirmal
+      changes:
+        - sql:
+            sql: |-
+              CREATE TABLE dbops_e2e_test_orders (
+                id BIGINT,
+                order_amount DECIMAL(10,2),
+                tax_amount DECIMAL(10,2) GENERATED ALWAYS AS (order_amount * 0.1),
+                created_at TIMESTAMP
+              ) USING DELTA
+      rollback:
+        - sql:
+            sql: DROP TABLE dbops_e2e_test_orders
+  - changeSet:
+      id: 8
+      author: nirmal
+      changes:
+        - renameColumn:
+            tableName: dbops_e2e_test_departments
+            oldColumnName: name
+            newColumnName: department_name
+            columnDataType: STRING
+      rollback:
+        - renameColumn:
+            tableName: dbops_e2e_test_departments
+            oldColumnName: department_name
+            newColumnName: name
+            columnDataType: STRING
+  - changeSet:
+      id: 9
+      author: nirmal
+      changes:
+        - sql:
+            sql: |-
+              CREATE VIEW dbops_e2e_test_employee_department_view AS
+              SELECT e.id, e.name, e.hired_at, e.status, d.department_name
+              FROM dbops_e2e_test_employees e
+              LEFT JOIN dbops_e2e_test_departments d ON e.department_id = d.id
+      rollback:
+        - sql:
+            sql: DROP VIEW dbops_e2e_test_employee_department_view
+  - changeSet:
+      id: 10
+      author: nirmal
+      changes:
+        - insert:
+            tableName: dbops_e2e_test_departments
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: department_name
+                  value: Engineering
+        - insert:
+            tableName: dbops_e2e_test_departments
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: department_name
+                  value: Sales
+        - insert:
+            tableName: dbops_e2e_test_departments
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: department_name
+                  value: Marketing
+        - insert:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: name
+                  value: Alice
+              - column:
+                  name: department_id
+                  value: "1"
+              - column:
+                  name: salary
+                  value: "95000.00"
+        - insert:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: name
+                  value: Bob
+              - column:
+                  name: department_id
+                  value: "2"
+              - column:
+                  name: salary
+                  value: "85000.00"
+        - insert:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: name
+                  value: Carol
+              - column:
+                  name: department_id
+                  value: "2"
+              - column:
+                  name: salary
+                  value: "88000.00"
+      rollback:
+        - delete:
+            tableName: dbops_e2e_test_employees
+            where: id IN (1, 2, 3)
+        - delete:
+            tableName: dbops_e2e_test_departments
+            where: id IN (1, 2, 3)
+  - changeSet:
+      id: 11
+      author: nirmal
+      changes:
+        - update:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: status
+                  value: ACTIVE
+            where: department_id IS NOT NULL
+      rollback:
+        - sql:
+            sql: UPDATE dbops_e2e_test_employees SET status = NULL WHERE department_id IS NOT NULL
+  - changeSet:
+      id: 12
+      author: nirmal
+      changes:
+        - delete:
+            tableName: dbops_e2e_test_employees
+            where: id = 3
+      rollback:
+        - insert:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: name
+                  value: Carol
+              - column:
+                  name: department_id
+                  value: "2"
+              - column:
+                  name: salary
+                  value: "88000.00"
+              - column:
+                  name: status
+                  value: ACTIVE
+  - changeSet:
+      id: 13
+      author: nirmal
+      changes:
+        - sql:
+            sql: |-
+              ALTER TABLE dbops_e2e_test_employees SET TBLPROPERTIES ('delta.autoOptimize.optimizeWrite' = 'true', 'delta.autoOptimize.autoCompact' = 'true');
+              COMMENT ON TABLE dbops_e2e_test_employees IS 'DBOPS e2e test table for Databricks employees data'
+      rollback:
+        - sql:
+            sql: |-
+              ALTER TABLE dbops_e2e_test_employees UNSET TBLPROPERTIES ('delta.autoOptimize.optimizeWrite', 'delta.autoOptimize.autoCompact');
+              COMMENT ON TABLE dbops_e2e_test_employees IS NULL
+  - changeSet:
+      id: 14
+      author: nirmal
+      changes:
+        - dropColumn:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: status
+      rollback:
+        - addColumn:
+            tableName: dbops_e2e_test_employees
+            columns:
+              - column:
+                  name: status
+                  type: STRING
+  - changeSet:
+      id: 15
+      author: nirmal
+      changes:
+        - renameTable:
+            oldTableName: dbops_e2e_test_projects
+            newTableName: dbops_e2e_test_projects_archive
+      rollback:
+        - renameTable:
+            oldTableName: dbops_e2e_test_projects_archive
+            newTableName: dbops_e2e_test_projects
+  - changeSet:
+      id: 16
+      author: nirmal
+      changes:
+        - sql:
+            sql: OPTIMIZE dbops_e2e_test_sales ZORDER BY (employee_id)
+      rollback: []
+  - changeSet:
+      id: 17
+      author: nirmal
+      comment: >-
+        Databricks/Delta Lake (Unity Catalog) supports declaring PRIMARY KEY and
+        FOREIGN KEY constraints as informational/metadata-only via NOT ENFORCED —
+        they are not validated against existing or future data, unlike traditional
+        RDBMS constraints.
+      changes:
+        - sql:
+            sql: |-
+              ALTER TABLE dbops_e2e_test_departments ADD CONSTRAINT pk_departments PRIMARY KEY (id);
+              ALTER TABLE dbops_e2e_test_employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES dbops_e2e_test_departments (id) NOT ENFORCED
+      rollback:
+        - sql:
+            sql: |-
+              ALTER TABLE dbops_e2e_test_employees DROP CONSTRAINT fk_employees_department;
+              ALTER TABLE dbops_e2e_test_departments DROP CONSTRAINT pk_departments
