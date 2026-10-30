@@ -1,0 +1,1 @@
+ALTER TABLE rpt_orders DROP COLUMN IF EXISTS status;
